@@ -1,24 +1,54 @@
 'use client';
 
-import { Button, Input, Label } from '@monsterindia/global-ui-components';
+// import { Button, Input, Label } from '@monsterindia/global-ui-components';
+import { Button, CheckboxList } from '@monsterindia/global-ui-components';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 
 import { formSchema } from '@/schema/formSchema';
 import { FormDataType } from '@/types/form';
+import { useState } from 'react';
 
 const Form = () => {
 	const {
 		register,
 		formState: { errors },
 		handleSubmit
-	} = useForm<FormDataType>({
-		resolver: zodResolver(formSchema)
+	} = useForm({
+		// resolver: zodResolver(formSchema)
 	});
 
-	const onSubmit = (data: FormDataType) => {
-		console.log(data);
+	const [checkedValues, setCheckvalues] = useState<string[]>([]);
+
+	const onSubmit = (data: unknown) => {
+		console.log('Submitted data: ', data);
+	};
+
+	const options = [
+		{
+			value: 'true',
+			id: 'id-1',
+			displayName:
+				'By using this site, you agree to our Terms of Use and Privacy Policy.'
+		},
+		{
+			value: 'opt-2',
+			id: 'id-2',
+			displayName: 'Orange'
+		}
+		// {
+		// 	value: 'opt-3',
+		// 	id: 'id-3',
+		// 	displayName: 'Kiwi'
+		// }
+	];
+
+	const eventFunctionHandler = (event: { values?: string[] }) => {
+		// check state of checkbox
+		setCheckvalues(event.values!);
+
+		console.log('Checkbox list', event.values);
 	};
 
 	return (
@@ -28,7 +58,21 @@ const Form = () => {
 			noValidate
 		>
 			<div>
-				<Label labelText='Name' htmlFor='name'>
+				<CheckboxList
+					options={options}
+					layout={'col'}
+					size={'small'}
+					eventChangeHandler={eventFunctionHandler}
+					defaultChecked={['true']}
+				/>
+				<input
+					id='name'
+					type='text'
+					placeholder='Enter your name'
+					{...register('name', { required: true })}
+				/>
+
+				{/* <Label labelText='Name' htmlFor='name'>
 					<Input
 						id='name'
 						label='Name'
@@ -80,7 +124,7 @@ const Form = () => {
 								: ''
 						}
 					/>
-				</Label>
+				</Label> */}
 			</div>
 
 			<Button type='submit' label='Submit' modifier='primary' />
